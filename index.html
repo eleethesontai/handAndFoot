@@ -11,55 +11,200 @@
             body {
                 width: 100vw;
                 height: 100vh;
-                padding: 1rem;
             }
             table {
                 border-collapse: collapse;
                 width: 100%;
                 height: 100%;
             }
-            td {
+            th, td {
                 border: 1px solid lightgray;
             }
             input {
-                background-color: inherit;
-                border: 0;
                 outline: 0;
+                border: 0;
                 width: 100%;
+                height: 100%;
             }
         </style>
     </head>
     <body>
-        <form>
-            <table>
-                <thead>
-                    <tr><th></th><th></th><th>Player #1</th><th>Player #2</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Round #1</td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td>Out</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>Draw</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>Clean</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>Dirty</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>Wilds & 7's</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>Threes</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>A & 2</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>4 to 7</td><td><input type="text"></td><td><input type="text"></td></tr>
-                    <tr><td></td><td>8 to K</td><td><input type="text"></td><td><input type="text"></td></tr>
-                </tbody>
-                <tfoot><td>Total</td><td></td><td></td><td></td></tfoot>
-            </table>
-        </form>
+        <table id="table1">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>
+                        <button onclick="calculate()">Calculate</button>
+                    </th>
+                    <th>Round #1</th>
+                    <th>Round #2</th>
+                    <th>Round #3</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+        </table>
         <script>
+            
+            let table = document.getElementById("table1")
+            let rounds = 3
+            let players = 2
 
-            document
-                .querySelectorAll('input')
-                .forEach(item => {
-                    item.addEventListener('keyup', event => {
+            function calculate() {
+
+                for(let player=0; player<players; player++) {
+
+                    let playerScore = 0
+
+                    for(let round=0; round<rounds; round++) {
                         
-                    })
-                })
+                        let draw = parseInt(document.querySelector(`tbody[player="${player}"] input[property="draw"][round="${round}"]`).value || 0)
+                        let out = parseInt(document.querySelector(`tbody[player="${player}"] input[property="out"][round="${round}"]`).value || 0)
+                        let hand = parseInt(document.querySelector(`tbody[player="${player}"] input[property="hand"][round="${round}"]`).value || 0)
+                        let clean = parseInt(document.querySelector(`tbody[player="${player}"] input[property="clean"][round="${round}"]`).value || 0)
+                        let dirty = parseInt(document.querySelector(`tbody[player="${player}"] input[property="dirty"][round="${round}"]`).value || 0)
+                        let wilds = parseInt(document.querySelector(`tbody[player="${player}"] input[property="wilds"][round="${round}"]`).value || 0)
+                        let threes = parseInt(document.querySelector(`tbody[player="${player}"] input[property="threes"][round="${round}"]`).value || 0)
+                        let jokers = parseInt(document.querySelector(`tbody[player="${player}"] input[property="jokers"][round="${round}"]`).value || 0)
+                        let aces = parseInt(document.querySelector(`tbody[player="${player}"] input[property="aces"][round="${round}"]`).value || 0)
+                        let fours = parseInt(document.querySelector(`tbody[player="${player}"] input[property="fours"][round="${round}"]`).value || 0)
+                        let eights = parseInt(document.querySelector(`tbody[player="${player}"] input[property="eights"][round="${round}"]`).value || 0)
+
+                        let score = 
+                            (draw)+(out)+(-hand)+(clean*500)+(dirty*300)+(wilds*1500)+(threes*100)+(jokers*50)+(aces*20)+(fours*5)+(eights*10)
+                        playerScore += score
+
+                        let element = document.querySelector(`tbody[player="${player}"] th[round="${round}"]`)
+                        element.innerHTML = score
+
+                    }
+
+                    document
+                        .querySelector(`tbody[player="${player}"] th.total`)
+                        .innerHTML = playerScore
+
+                }
+
+            }
+            
+            function reset() {
+
+            }
+
+            function load() {
+
+                for(let player=0; player<players; player++) {
+                    
+                    let tbody = document.createElement("tbody")
+                    tbody.setAttribute("player", player)
+                    
+                    tbody.innerHTML=`
+                        <tr>
+                            <th>Player #${player+1}</th>
+                            <th></th>
+                            <th round="0"></th>
+                            <th round="1"></th>
+                            <th round="2"></th>
+                            <th class="total"></th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Draw</td>
+                            <td><input property="draw" round="0"/></td>
+                            <td><input property="draw" round="1"/></td>
+                            <td><input property="draw" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Out</td>
+                            <td><input property="out" round="0"/></td>
+                            <td><input property="out" round="1"/></td>
+                            <td><input property="out" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Hand</td>
+                            <td><input property="hand" round="0"/></td>
+                            <td><input property="hand" round="1"/></td>
+                            <td><input property="hand" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Clean</td>
+                            <td><input property="clean" round="0"/></td>
+                            <td><input property="clean" round="1"/></td>
+                            <td><input property="clean" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Dirty</td>
+                            <td><input property="dirty" round="0"/></td>
+                            <td><input property="dirty" round="1"/></td>
+                            <td><input property="dirty" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Wilds</td>
+                            <td><input property="wilds" round="0"/></td>
+                            <td><input property="wilds" round="1"/></td>
+                            <td><input property="wilds" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Threes</td>
+                            <td><input property="threes" round="0"/></td>
+                            <td><input property="threes" round="1"/></td>
+                            <td><input property="threes" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Jokers</td>
+                            <td><input property="jokers" round="0"/></td>
+                            <td><input property="jokers" round="1"/></td>
+                            <td><input property="jokers" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Aces & 2</td>
+                            <td><input property="aces" round="0"/></td>
+                            <td><input property="aces" round="1"/></td>
+                            <td><input property="aces" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>4 to 7</td>
+                            <td><input property="fours" round="0"/></td>
+                            <td><input property="fours" round="1"/></td>
+                            <td><input property="fours" round="2"/></td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>8 to K</td>
+                            <td><input property="eights" round="0"/></td>
+                            <td><input property="eights" round="1"/></td>
+                            <td><input property="eights" round="2"/></td>
+                            
+                        </tr>
+                    `
+
+                    table.appendChild(tbody)
+
+                }
+
+            }
+
+            load()
+            calculate()
 
         </script>
     </body>
-</html>
+</html> 
